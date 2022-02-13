@@ -10,9 +10,9 @@ import com.bumptech.glide.Glide
 import com.example.newsapiclient.data.model.Article
 import com.example.newsapiclient.databinding.NewsListItemBinding
 
-class NewsAdapter : RecyclerView.Adapter<NewsViewHolder>(){
+class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
-    private val callback = object : DiffUtil.ItemCallback<Article>(){
+    private val callback = object : DiffUtil.ItemCallback<Article>() {
         override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
             return oldItem.url == newItem.url
         }
@@ -41,18 +41,33 @@ class NewsAdapter : RecyclerView.Adapter<NewsViewHolder>(){
     override fun getItemCount(): Int {
         return differ.currentList.size
     }
-}
 
-class NewsViewHolder(private val binding: NewsListItemBinding) : RecyclerView.ViewHolder(binding.root){
+    inner
+    class NewsViewHolder(private val binding: NewsListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(article: Article){
-        Log.i("MYTAG", "${article.title}, ${article.description}")
-        binding.tvTitle.text = article.title
-        binding.tvDescription.text = article.description
-        binding.tvPublishedAt.text = article.publishedAt
-        binding.tvAuthor.text = article.source?.name
-        Glide.with(binding.ivNews.context)
-            .load(article.urlToImage)
-            .into(binding.ivNews)
+        fun bind(article: Article) {
+            Log.i("MYTAG", "${article.title}, ${article.description}")
+            binding.tvTitle.text = article.title
+            binding.tvDescription.text = article.description
+            binding.tvPublishedAt.text = article.publishedAt
+            binding.tvAuthor.text = article.source?.name
+            Glide.with(binding.ivNews.context)
+                .load(article.urlToImage)
+                .into(binding.ivNews)
+            binding.root.setOnClickListener {
+                onClickListener?.let {
+                    it(article)
+                }
+            }
+        }
+
     }
+
+    private var onClickListener: ((Article) -> Unit?)? = null
+
+    fun setOnClickListener(listener: (Article) -> Unit) {
+        onClickListener = listener
+    }
+
 }

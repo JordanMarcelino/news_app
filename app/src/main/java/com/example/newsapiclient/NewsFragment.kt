@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapiclient.data.util.Resource
 import com.example.newsapiclient.databinding.FragmentNewsBinding
@@ -35,6 +36,9 @@ class NewsFragment : Fragment() {
         newsAdapter = (activity as MainActivity).newsAdapter
         initRecycler()
         viewNewsList()
+        newsAdapter.setOnClickListener {
+            findNavController().navigate(NewsFragmentDirections.actionNewsFragmentToDetailsFragment(it))
+        }
     }
 
     private fun initRecycler() {
