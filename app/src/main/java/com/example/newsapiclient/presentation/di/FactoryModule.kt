@@ -18,5 +18,5 @@ class FactoryModule {
     fun providesNewsViewModelFactory(
         app : Application,
         getNewsHeadlinesUseCase: GetNewsHeadlinesUseCase
-    ) = NewsViewModelFactory(app, getNewsHeadlinesUseCase)
+    ) : NewsViewModelFactory = NewsViewModelFactory(app, getNewsHeadlinesUseCase)
 }

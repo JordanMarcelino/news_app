@@ -2,6 +2,7 @@ package com.example.newsapiclient.presentation.di
 
 import com.example.newsapiclient.data.repository.NewsRepositoryImpl
 import com.example.newsapiclient.data.repository.datasource.NewsRemoteDataSource
+import com.example.newsapiclient.domain.repository.NewsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,5 +15,5 @@ class RepositoryModule {
 
     @Singleton
     @Provides
-    fun providesNewsRepository(newsRemoteDataSource: NewsRemoteDataSource) = NewsRepositoryImpl(newsRemoteDataSource)
+    fun providesNewsRepository(newsRemoteDataSource: NewsRemoteDataSource) : NewsRepository = NewsRepositoryImpl(newsRemoteDataSource)
 }

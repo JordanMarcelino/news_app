@@ -14,5 +14,5 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun providesGetNewsHeadlinesUseCase(newsRepository: NewsRepository) = GetNewsHeadlinesUseCase(newsRepository)
+    fun providesGetNewsHeadlinesUseCase(newsRepository: NewsRepository) : GetNewsHeadlinesUseCase = GetNewsHeadlinesUseCase(newsRepository)
 }
