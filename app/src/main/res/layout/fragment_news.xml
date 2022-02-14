@@ -7,6 +7,12 @@
     android:background="@color/rvBg"
     tools:context=".NewsFragment" >
 
+    <SearchView
+        android:id="@+id/sv_news"
+        android:background="@color/searchBg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_news"
         android:padding="5dp"
@@ -21,4 +27,5 @@
         tools:visibility="visible"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
 </LinearLayout>

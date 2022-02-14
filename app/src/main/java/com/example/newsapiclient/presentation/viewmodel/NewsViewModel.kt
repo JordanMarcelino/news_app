@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.newsapiclient.data.model.APIResponse
 import com.example.newsapiclient.data.util.Resource
 import com.example.newsapiclient.domain.usecase.GetNewsHeadlinesUseCase
+import com.example.newsapiclient.domain.usecase.SearchedNewsUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -19,12 +20,19 @@ import java.lang.Exception
 
 class NewsViewModel(
     private val app: Application,
-    private val getNewsHeadlinesUseCase: GetNewsHeadlinesUseCase
+    private val getNewsHeadlinesUseCase: GetNewsHeadlinesUseCase,
+    private val searchedNewsUseCase: SearchedNewsUseCase
 ) : AndroidViewModel(app) {
 
     private val newsHeadlines = MutableLiveData<Resource<APIResponse>>()
     val newsHeadlinesData: LiveData<Resource<APIResponse>>
         get() = newsHeadlines
+
+    private val searchedNews = MutableLiveData<Resource<APIResponse>>()
+    val searchedNewsData : LiveData<Resource<APIResponse>>
+        get() = searchedNews
+
+
 
     fun getNewsHeadlines(country: String, page: Int) = viewModelScope.launch(Dispatchers.IO) {
         newsHeadlines.postValue(Resource.Loading())
@@ -39,6 +47,21 @@ class NewsViewModel(
             newsHeadlines.postValue(Resource.Error(e.message.toString()))
         }
     }
+
+    fun getSearchedNews(country: String, page: Int, searchQuery : String) = viewModelScope.launch(Dispatchers.IO) {
+        newsHeadlines.postValue(Resource.Loading())
+        try {
+            if (isNetworkAvailable(app)) {
+                val response = searchedNewsUseCase.execute(country, page, searchQuery)
+                newsHeadlines.postValue(response)
+            } else {
+                newsHeadlines.postValue(Resource.Error("Network is not available"))
+            }
+        } catch (e: Exception) {
+            newsHeadlines.postValue(Resource.Error(e.message.toString()))
+        }
+    }
+
 
     private fun isNetworkAvailable(context: Context?): Boolean {
         if (context == null) return false
