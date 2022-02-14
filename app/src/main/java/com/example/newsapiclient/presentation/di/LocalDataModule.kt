@@ -1,8 +1,8 @@
 package com.example.newsapiclient.presentation.di
 
-import com.example.newsapiclient.data.repository.NewsRepositoryImpl
+import com.example.newsapiclient.data.db.ArticleDao
 import com.example.newsapiclient.data.repository.datasource.NewsLocalDataSource
-import com.example.newsapiclient.data.repository.datasource.NewsRemoteDataSource
+import com.example.newsapiclient.data.repository.datasourceimpl.NewsLocalDataSourceImpl
 import com.example.newsapiclient.domain.repository.NewsRepository
 import dagger.Module
 import dagger.Provides
@@ -12,9 +12,9 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class RepositoryModule {
+class LocalDataModule {
 
     @Singleton
     @Provides
-    fun providesNewsRepository(newsRemoteDataSource: NewsRemoteDataSource, newsLocalDataSource: NewsLocalDataSource) : NewsRepository = NewsRepositoryImpl(newsRemoteDataSource, newsLocalDataSource)
+    fun providesNewsLocalDataSource(articleDao: ArticleDao) : NewsLocalDataSource = NewsLocalDataSourceImpl(articleDao)
 }

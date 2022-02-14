@@ -5,15 +5,13 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.newsapiclient.data.model.APIResponse
+import com.example.newsapiclient.data.model.Article
 import com.example.newsapiclient.data.util.Resource
-import com.example.newsapiclient.domain.usecase.GetNewsHeadlinesUseCase
-import com.example.newsapiclient.domain.usecase.SearchedNewsUseCase
+import com.example.newsapiclient.domain.usecase.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
@@ -21,7 +19,10 @@ import java.lang.Exception
 class NewsViewModel(
     private val app: Application,
     private val getNewsHeadlinesUseCase: GetNewsHeadlinesUseCase,
-    private val searchedNewsUseCase: SearchedNewsUseCase
+    private val searchedNewsUseCase: SearchedNewsUseCase,
+    private val savedNewsUseCase: SavedNewsUseCase,
+    private val deleteSavedNewsUseCase: DeleteSavedNewsUseCase,
+    private val getSavedNewsUseCase: GetSavedNewsUseCase
 ) : AndroidViewModel(app) {
 
     private val newsHeadlines = MutableLiveData<Resource<APIResponse>>()
@@ -31,7 +32,6 @@ class NewsViewModel(
     private val searchedNews = MutableLiveData<Resource<APIResponse>>()
     val searchedNewsData : LiveData<Resource<APIResponse>>
         get() = searchedNews
-
 
 
     fun getNewsHeadlines(country: String, page: Int) = viewModelScope.launch(Dispatchers.IO) {
@@ -62,6 +62,18 @@ class NewsViewModel(
         }
     }
 
+    fun getSavedArticle() = liveData {
+        val articleList = getSavedNewsUseCase.execute().collect()
+        emit(articleList)
+    }
+
+    fun saveNews(article: Article) = viewModelScope.launch {
+        savedNewsUseCase.execute(article)
+    }
+
+    fun deleteNews(article: Article) = viewModelScope.launch {
+        deleteSavedNewsUseCase.execute(article)
+    }
 
     private fun isNetworkAvailable(context: Context?): Boolean {
         if (context == null) return false
