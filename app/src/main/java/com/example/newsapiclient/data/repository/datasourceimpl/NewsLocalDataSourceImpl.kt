@@ -13,14 +13,10 @@ class NewsLocalDataSourceImpl(
     private val articleDao: ArticleDao
 ) : NewsLocalDataSource {
     override suspend fun saveArticleToDB(article: Article){
-        CoroutineScope(Dispatchers.IO).launch {
             articleDao.insert(article)
-        }
     }
     override suspend fun deleteArticleFromDB(article: Article) {
-        CoroutineScope(Dispatchers.IO).launch {
             articleDao.delete(article)
-        }
     }
 
     override fun getAllArticlesFromDB(): Flow<List<Article>> = articleDao.getArticle()

@@ -68,7 +68,8 @@ class NewsFragment : Fragment() {
         binding.svNews.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 val searchQuery = query.toString()
-                viewSearchedNews(searchQuery)
+                viewModel.getSearchedNews(country, page, searchQuery)
+                viewSearchedNews()
                 return false
             }
 
@@ -76,7 +77,8 @@ class NewsFragment : Fragment() {
                 MainScope().launch {
                     delay(2000)
                     val searchQuery = newText.toString()
-                    viewSearchedNews(searchQuery)
+                    viewModel.getSearchedNews(country, page, searchQuery)
+                    viewSearchedNews()
                 }
                 return false
             }
@@ -88,8 +90,7 @@ class NewsFragment : Fragment() {
         }
     }
 
-    private fun viewSearchedNews(searchQuery: String) {
-        viewModel.getSearchedNews(country, page, searchQuery)
+    private fun viewSearchedNews() {
         viewModel.searchedNewsData.observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Success -> {

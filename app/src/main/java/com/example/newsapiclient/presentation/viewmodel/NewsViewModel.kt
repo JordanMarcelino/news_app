@@ -30,7 +30,7 @@ class NewsViewModel(
         get() = newsHeadlines
 
     private val searchedNews = MutableLiveData<Resource<APIResponse>>()
-    val searchedNewsData : LiveData<Resource<APIResponse>>
+    val searchedNewsData: LiveData<Resource<APIResponse>>
         get() = searchedNews
 
 
@@ -48,23 +48,25 @@ class NewsViewModel(
         }
     }
 
-    fun getSearchedNews(country: String, page: Int, searchQuery : String) = viewModelScope.launch(Dispatchers.IO) {
-        newsHeadlines.postValue(Resource.Loading())
-        try {
-            if (isNetworkAvailable(app)) {
-                val response = searchedNewsUseCase.execute(country, page, searchQuery)
-                newsHeadlines.postValue(response)
-            } else {
-                newsHeadlines.postValue(Resource.Error("Network is not available"))
+    fun getSearchedNews(country: String, page: Int, searchQuery: String) =
+        viewModelScope.launch(Dispatchers.IO) {
+            newsHeadlines.postValue(Resource.Loading())
+            try {
+                if (isNetworkAvailable(app)) {
+                    val response = searchedNewsUseCase.execute(country, page, searchQuery)
+                    newsHeadlines.postValue(response)
+                } else {
+                    newsHeadlines.postValue(Resource.Error("Network is not available"))
+                }
+            } catch (e: Exception) {
+                newsHeadlines.postValue(Resource.Error(e.message.toString()))
             }
-        } catch (e: Exception) {
-            newsHeadlines.postValue(Resource.Error(e.message.toString()))
         }
-    }
 
     fun getSavedArticle() = liveData {
-        val articleList = getSavedNewsUseCase.execute().collect()
-        emit(articleList)
+        val articleList = getSavedNewsUseCase.execute().collect {
+            emit(it)
+        }
     }
 
     fun saveNews(article: Article) = viewModelScope.launch {
